@@ -30,7 +30,7 @@ namespace sudoku
         private void dosya_yukle_Click(object sender, EventArgs e)
         {
             Board board = new Board();
-           
+
             OpenFileDialog theDialog = new OpenFileDialog();
             theDialog.Title = "Open Text File";
             theDialog.Filter = "TXT files|*.txt";
@@ -39,62 +39,16 @@ namespace sudoku
             {
                 try
                 {
-                    
-                        using (StreamReader sr = new StreamReader(theDialog.FileName))
-                        {
-                            int y = 1;
-                            int separatrixY = 1;
-                            string numbers;
-                            int row = 0;
-                            while ((numbers = sr.ReadLine()) != null)
-                            {
-                                int x = 1;
-                                int separatrixX = 0;
-                                for (int i = 0; i < numbers.Length; i++)
-                                {
-                                    byte number = byte.Parse(numbers[i].ToString());
-                                    if (separatrixX % 3 == 0)
-                                    {
-                                        x = x + 5;
-                                    }
-
-                                    TextBox tb = new TextBox();
-                                    tb.Size = new System.Drawing.Size(15, 15);
-                                    tb.TextAlign = contentAlign;
-                                    if (number == 0)
-                                    {
-                                        tb.Text = " ";
-                                        board.Table[row, i] = new Cell { value = 0 };
-                                    }
-                                    else
-                                    {
-                                        tb.Text = number.ToString();
-                                        board.Table[row, i] = new Cell { value = number };
-                                    }
-                                    Point p = new Point(50 + x, 50 + y);
-                                    tb.Location = p;
-                                    this.Controls.Add(tb);
-                                    separatrixX++;
-                                    x = x + 15;
-                                }
-
-                                if (separatrixY % 3 == 0)
-                                {
-                                    y = y + 25;
-                                }
-                                else
-                                {
-                                    y = y + 20;
-                                }
-
-                                separatrixY++;
-                                row++;
-                            }
-                        }
-                    //board kontrol
+                    List<TextBox> textBoxs = board.Oku(theDialog.FileName);
+                    foreach (var textBox in textBoxs)
+                    {
+                        Controls.Add(textBox);
+                    }
                     bool valid = board.IsValid();
-                    Console.WriteLine(valid);
-
+                    if (!valid)
+                    {
+                        MessageBox.Show("Board hatalı");
+                    }
                 }
                 catch (Exception ex)
                 {
