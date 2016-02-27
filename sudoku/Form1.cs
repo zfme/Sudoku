@@ -55,6 +55,7 @@ namespace sudoku
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
+          board.FillPossibleValues();
         }
 
 

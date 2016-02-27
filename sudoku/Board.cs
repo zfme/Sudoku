@@ -20,11 +20,23 @@ namespace sudoku
             {
                 for (var indexy = 0; indexy < 9; indexy++)
                 {
-
-
-
-                    Table[index, indexy].possibleValues = new List<byte>();
+                    var cell = Table[index, indexy];
+                    List<byte> cellValues = new List<byte>();
+                    if (cell.value == 0)
+                    {
+                        for (int i = 1; i <= 9; i++)
+                        {
+                            cell.value = Convert.ToByte(i);
+                            if (IsValid())
+                            {
+                                cellValues.Add(Convert.ToByte(i));
+                            }
+                            cell.value = 0;
+                        }
+                        cell.possibleValues = cellValues;
+                    }
                 }
+
             }
         }
 
