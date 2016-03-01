@@ -14,6 +14,20 @@ namespace sudoku
         public Cell[,] Table = new Cell[9, 9];
         public State State { get; set; }
 
+        public Board Copy()
+        {
+            var board = new Board {State = State};
+            var newTable = new Cell[9,9];
+            for (var index = 0; index < 9; index++)
+            {
+                for (var indexy = 0; indexy < 9; indexy++)
+                {
+                    newTable[index, indexy] = Table[index, indexy].Copy();
+                }
+            }
+            return board;
+        }
+
         public void FillPossibleValues()
         {
             bool fillAgain = false;
