@@ -8,7 +8,7 @@ namespace sudoku
 {
     class Cell
     {
-        public byte value { get; set; }
-        public List<byte> possibleValues { get; set; }
+        public byte Value { get; set; }
+        public List<byte> PossibleValues { get; set; }
     }
 }

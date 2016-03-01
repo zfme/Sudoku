@@ -16,27 +16,41 @@ namespace sudoku
 
         public void FillPossibleValues()
         {
+            bool fillAgain = false;
             for (var index = 0; index < 9; index++)
             {
                 for (var indexy = 0; indexy < 9; indexy++)
                 {
                     var cell = Table[index, indexy];
-                    List<byte> cellValues = new List<byte>();
-                    if (cell.value == 0)
+                    var cellValues = new List<byte>();
+                    if (cell.Value == 0)
                     {
                         for (int i = 1; i <= 9; i++)
                         {
-                            cell.value = Convert.ToByte(i);
+                            cell.Value = Convert.ToByte(i);
                             if (IsValid())
                             {
                                 cellValues.Add(Convert.ToByte(i));
                             }
-                            cell.value = 0;
+                            cell.Value = 0;
                         }
-                        cell.possibleValues = cellValues;
+                        cell.PossibleValues = cellValues;
+                        if (cell.PossibleValues.Count == 1)
+                        {
+                            cell.Value = cell.PossibleValues[0];
+                            fillAgain = true;
+                            break;
+                        }
                     }
                 }
-
+                if (fillAgain)
+                {
+                    break;
+                }
+            }
+            if (fillAgain)
+            {
+                FillPossibleValues();
             }
         }
 
@@ -68,12 +82,12 @@ namespace sudoku
                         if (number == 0)
                         {
                             tb.Text = " ";
-                            Table[row, i] = new Cell { value = 0 };
+                            Table[row, i] = new Cell { Value = 0 };
                         }
                         else
                         {
                             tb.Text = number.ToString();
-                            Table[row, i] = new Cell { value = number };
+                            Table[row, i] = new Cell { Value = number };
                         }
                         Point p = new Point(50 + x, 50 + y);
                         tb.Location = p;
@@ -162,16 +176,16 @@ namespace sudoku
             //}
             foreach (Cell cell in cells)
             {
-                if (cell.value == 0)
+                if (cell.Value == 0)
                 {
                     continue;
                 }
-                bool value = numbers[cell.value - 1];
+                bool value = numbers[cell.Value - 1];
                 if (value)
                 {
                     return false;
                 }
-                numbers[cell.value - 1] = true;
+                numbers[cell.Value - 1] = true;
             }
             return true;
         }
