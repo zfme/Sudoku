@@ -13,7 +13,11 @@ namespace sudoku
 
         public Cell Copy()
         {
-            return new Cell {Value = Value, PossibleValues = new List<byte>()};
+            Cell copy = new Cell {Value = Value, PossibleValues = new List<byte>()};
+
+            copy.PossibleValues.AddRange(this.PossibleValues);
+
+            return copy;
         }
     }
 }

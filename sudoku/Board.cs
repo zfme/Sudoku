@@ -25,46 +25,51 @@ namespace sudoku
                     newTable[index, indexy] = Table[index, indexy].Copy();
                 }
             }
+            board.Table = newTable;
             return board;
         }
 
         public void FillPossibleValues()
         {
-            bool fillAgain = false;
-            for (var index = 0; index < 9; index++)
+            while (true)
             {
-                for (var indexy = 0; indexy < 9; indexy++)
+                bool fillAgain = false;
+                for (var index = 0; index < 9; index++)
                 {
-                    var cell = Table[index, indexy];
-                    var cellValues = new List<byte>();
-                    if (cell.Value == 0)
+                    for (var indexy = 0; indexy < 9; indexy++)
                     {
-                        for (int i = 1; i <= 9; i++)
+                        var cell = Table[index, indexy];
+                        var cellValues = new List<byte>();
+                        if (cell.Value == 0)
                         {
-                            cell.Value = Convert.ToByte(i);
-                            if (IsValid())
+                            for (int i = 1; i <= 9; i++)
                             {
-                                cellValues.Add(Convert.ToByte(i));
+                                cell.Value = Convert.ToByte(i);
+                                if (IsValid())
+                                {
+                                    cellValues.Add(Convert.ToByte(i));
+                                }
+                                cell.Value = 0;
                             }
-                            cell.Value = 0;
+                            cell.PossibleValues = cellValues;
+                            if (cell.PossibleValues.Count == 1)
+                            {
+                                cell.Value = cell.PossibleValues[0];
+                                fillAgain = true;
+                                break;
+                            }
                         }
-                        cell.PossibleValues = cellValues;
-                        if (cell.PossibleValues.Count == 1)
-                        {
-                            cell.Value = cell.PossibleValues[0];
-                            fillAgain = true;
-                            break;
-                        }
+                    }
+                    if (fillAgain)
+                    {
+                        break;
                     }
                 }
                 if (fillAgain)
                 {
-                    break;
+                    continue;
                 }
-            }
-            if (fillAgain)
-            {
-                FillPossibleValues();
+                break;
             }
         }
 
