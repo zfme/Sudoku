@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace sudoku
 {
-    enum State
+    public enum State
     {
         Empty,Processing,Finished
     }

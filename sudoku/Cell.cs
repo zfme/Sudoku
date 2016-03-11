@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace sudoku
 {
-    class Cell
+    public class Cell
     {
         public byte Value { get; set; }
         public List<byte> PossibleValues { get; set; }

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace sudoku
 {
-    class Board
+   public class Board
     {
         public Cell[,] Table = new Cell[9, 9];
         public State State { get; set; }
@@ -207,6 +207,49 @@ namespace sudoku
                 numbers[cell.Value - 1] = true;
             }
             return true;
+        }
+
+       public bool IsSolved()
+       {
+           if (!IsValid())
+           {
+               return false;
+           }
+            for (var index = 0; index < 9; index++)
+            {
+                for (var indexy = 0; indexy < 9; indexy++)
+                {
+                   var cellValue = Table[index, indexy].Value;
+                    if (cellValue==0)                
+                    {
+                        return false;
+                    }
+                }
+            }
+           return true;
+       }
+
+       public void FillStackWithFirstPossibleValues(Stack<Board> stack)
+       {
+            for (var index = 0; index < 9; index++)
+            {
+                for (var indexy = 0; indexy < 9; indexy++)
+                {
+                    var cell = Table[index, indexy];
+                    var cellValue = cell.Value;
+                    if (cellValue == 0)
+                    {
+                        cell.PossibleValues.Sort(new ReverseSorter());
+                        foreach (var possibleValue in cell.PossibleValues)
+                        {
+                            Board copyBoard = this.Copy();
+                            copyBoard.Table[index, indexy].Value=possibleValue;
+                            stack.Push(copyBoard);
+                        }
+                        return;
+                    }
+                }
+            }
         }
     }
 }

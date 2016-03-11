@@ -56,6 +56,7 @@ namespace sudoku
                 }
             }
           board.FillPossibleValues();
+          Board solvedBoard = new DFSSolver().SolveWithDFS(board);
         }
 
 
