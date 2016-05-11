@@ -39,9 +39,9 @@ namespace sudoku
                     for (var indexy = 0; indexy < 9; indexy++)
                     {
                         var cell = Table[index, indexy];
-                        var cellValues = new List<byte>();
                         if (cell.Value == 0)
                         {
+                            var cellValues = new List<byte>();
                             for (int i = 1; i <= 9; i++)
                             {
                                 cell.Value = Convert.ToByte(i);
@@ -101,12 +101,12 @@ namespace sudoku
                         if (number == 0)
                         {
                             tb.Text = " ";
-                            Table[row, i] = new Cell { Value = 0 };
+                            Table[row, i] = new Cell { Value = 0, PossibleValues = new List<byte>()};
                         }
                         else
                         {
                             tb.Text = number.ToString();
-                            Table[row, i] = new Cell { Value = number };
+                            Table[row, i] = new Cell { Value = number, PossibleValues = new List<byte>()};
                         }
                         Point p = new Point(50 + x, 50 + y);
                         tb.Location = p;
@@ -239,13 +239,12 @@ namespace sudoku
                     var cellValue = cell.Value;
                     if (cellValue == 0)
                     {
-                        cell.PossibleValues.Sort(new ReverseSorter());
-                        foreach (var possibleValue in cell.PossibleValues)
+                        for (int i = cell.PossibleValues.Count-1 ; i >= 0; i--)
                         {
                             Board copyBoard = this.Copy();
-                            copyBoard.Table[index, indexy].Value=possibleValue;
+                            copyBoard.Table[index, indexy].Value = cell.PossibleValues[i];
                             stack.Push(copyBoard);
-                        }
+                        }                   
                         return;
                     }
                 }

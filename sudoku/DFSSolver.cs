@@ -8,13 +8,11 @@ namespace sudoku
 {
     public class DFSSolver
     {
-        //List<Queue<Board>> queue;
-        private Stack<Board> stack=new Stack<Board>(); 
+        private Stack<Board> stack = new Stack<Board>();
         public Board SolveWithDFS(Board board)
         {
-            //bool solved = false;
             stack.Push(board);
-            while (stack.Count>0)
+            while (stack.Count > 0)
             {
                 Board current = stack.Pop();
                 current.FillPossibleValues();

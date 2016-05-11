@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -56,32 +57,18 @@ namespace sudoku
                 }
             }
           board.FillPossibleValues();
-          Board solvedBoard = new DFSSolver().SolveWithDFS(board);
+        
+            Stopwatch stopwatch = new Stopwatch(); 
+            stopwatch.Start();
+            Board solvedBoard = new DFSSolver().SolveWithDFS(board);
+            stopwatch.Stop();
+            Console.WriteLine("Time elapsed: {0} ms", stopwatch.ElapsedMilliseconds);
+
+            Board sonuc = new LoQSolver().Solve(board);
+
         }
 
 
-        public HorizontalAlignment contentAlign { get; set; }
-
-        public string lines { get; set; }
     }
 }
-////listBox1.Items.Clear();
 
-//            // Dosyamızı okuyacak.
-//            StreamReader oku;
-
-//            // Belirtmiş olduğum yoldaki dosyayı açacak. 
-//            /* NOT: @ bu işareti koymamın nedeni \\ 2 defa bundan 
-//            yapmamak içindir. */
-//            oku = File.OpenText(@"C:\Documents and Settings\YIGIT
-//            \Belgelerim\visual studio 2010
-//            \Projects\TxtVeriOkuma\TxtVeriOkuma\bin\Debug\C#.txt");
-
-//            string yazi;
-
-//            // Satır boş olana kadar okumaya devam eder.
-//            while ((yazi = oku.ReadLine()) != null)
-//            {
-//                // Listbox'ı .txt içeriği ile doldur.
-//                lstOku.Items.Add(yazi.ToString());
-//            }
