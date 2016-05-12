@@ -19,5 +19,10 @@ namespace sudoku
 
             return copy;
         }
+
+        public override string ToString()
+        {
+            return $"Value: {Value}";
+        }
     }
 }

@@ -9,15 +9,15 @@ using System.Windows.Forms;
 
 namespace sudoku
 {
-   public class Board
+    public class Board
     {
         public Cell[,] Table = new Cell[9, 9];
         public State State { get; set; }
 
         public Board Copy()
         {
-            var board = new Board {State = State};
-            var newTable = new Cell[9,9];
+            var board = new Board { State = State };
+            var newTable = new Cell[9, 9];
             for (var index = 0; index < 9; index++)
             {
                 for (var indexy = 0; indexy < 9; indexy++)
@@ -101,12 +101,12 @@ namespace sudoku
                         if (number == 0)
                         {
                             tb.Text = " ";
-                            Table[row, i] = new Cell { Value = 0, PossibleValues = new List<byte>()};
+                            Table[row, i] = new Cell { Value = 0, PossibleValues = new List<byte>() };
                         }
                         else
                         {
                             tb.Text = number.ToString();
-                            Table[row, i] = new Cell { Value = number, PossibleValues = new List<byte>()};
+                            Table[row, i] = new Cell { Value = number, PossibleValues = new List<byte>() };
                         }
                         Point p = new Point(50 + x, 50 + y);
                         tb.Location = p;
@@ -209,28 +209,28 @@ namespace sudoku
             return true;
         }
 
-       public bool IsSolved()
-       {
-           if (!IsValid())
-           {
-               return false;
-           }
+        public bool IsSolved()
+        {
+            if (!IsValid())
+            {
+                return false;
+            }
             for (var index = 0; index < 9; index++)
             {
                 for (var indexy = 0; indexy < 9; indexy++)
                 {
-                   var cellValue = Table[index, indexy].Value;
-                    if (cellValue==0)                
+                    var cellValue = Table[index, indexy].Value;
+                    if (cellValue == 0)
                     {
                         return false;
                     }
                 }
             }
-           return true;
-       }
+            return true;
+        }
 
-       public void FillStackWithFirstPossibleValues(Stack<Board> stack)
-       {
+        public void FillStackWithFirstPossibleValues(Stack<Board> stack)
+        {
             for (var index = 0; index < 9; index++)
             {
                 for (var indexy = 0; indexy < 9; indexy++)
@@ -239,16 +239,38 @@ namespace sudoku
                     var cellValue = cell.Value;
                     if (cellValue == 0)
                     {
-                        for (int i = cell.PossibleValues.Count-1 ; i >= 0; i--)
+                        for (int i = cell.PossibleValues.Count - 1; i >= 0; i--)
                         {
                             Board copyBoard = this.Copy();
                             copyBoard.Table[index, indexy].Value = cell.PossibleValues[i];
                             stack.Push(copyBoard);
-                        }                   
+                        }
                         return;
                     }
                 }
             }
+        }
+
+        public List<Board> FirstEmptyCellPossibleBoards()
+        {
+            var boards = new List<Board>();
+            for (var index = 0; index < 9; index++)
+            {
+                for (var indexy = 0; indexy < 9; indexy++)
+                {
+                    if (Table[index, indexy].Value == 0)
+                    {
+                        foreach (var possibleValue in Table[index, indexy].PossibleValues)
+                        {
+                            Board board = this.Copy();
+                            board.Table[index, indexy].Value = possibleValue;
+                            boards.Add(board);
+                        }
+                        return boards;
+                    }
+                }
+            }
+            return boards;
         }
     }
 }

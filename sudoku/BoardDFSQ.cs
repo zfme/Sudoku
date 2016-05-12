@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace sudoku
 {
-    class BoardDFSQ
+    public class BoardDFSQ
     {
-        Board board;
-        State state;
-        int QueueNdx;
+        public Board Board { get; set; }
+        public State State { get; set; }
+        public int QueueNdx { get; set; }
     }
 }

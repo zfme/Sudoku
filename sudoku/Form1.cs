@@ -49,22 +49,25 @@ namespace sudoku
                     if (!valid)
                     {
                         MessageBox.Show("Board hatalı");
+                        return;
                     }
+                    board.FillPossibleValues();
+
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    Board solvedBoard = new DFSSolver().SolveWithDFS(board);
+                    stopwatch.Stop();
+                    Console.WriteLine("Time elapsed: {0} ms", stopwatch.ElapsedMilliseconds);
+
+                    Board sonuc = new LoQSolver().Solve(board);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
-            }
-          board.FillPossibleValues();
-        
-            Stopwatch stopwatch = new Stopwatch(); 
-            stopwatch.Start();
-            Board solvedBoard = new DFSSolver().SolveWithDFS(board);
-            stopwatch.Stop();
-            Console.WriteLine("Time elapsed: {0} ms", stopwatch.ElapsedMilliseconds);
 
-            Board sonuc = new LoQSolver().Solve(board);
+            }
+         
 
         }
 
