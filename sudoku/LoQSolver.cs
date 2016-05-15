@@ -23,7 +23,7 @@ namespace sudoku
             queueList[0].Enqueue(new BoardDFSQ { Board = board, State = State.Empty });
             // çözüm objesi
             bool cozuldu = false;
-            object islemLock = new object();
+            Board cozumBoard = null;
             var options = new ParallelOptions { MaxDegreeOfParallelism = 8 };
             Parallel.For(0, 8, options, (i, loopState) =>
             {
@@ -68,6 +68,7 @@ namespace sudoku
                                 if (boardDfsq.Board.IsSolved()) 
                                 {
                                     cozuldu = true;
+                                    cozumBoard = boardDfsq.Board;
                                     break;
                                 }
                             }
@@ -91,14 +92,12 @@ namespace sudoku
                                             if (child.Board.IsSolved())
                                             {
                                                 cozuldu = true;
+                                                cozumBoard = child.Board;
                                                 return;
                                             }
-                                            else {
-                                                child.State = State.Empty;
-                                                child.QueueNdx = q + 1;
-                                                queueList[q + 1].Enqueue(child);
-                                            }
-                                            
+                                            child.State = State.Empty;
+                                            child.QueueNdx = q + 1;
+                                            queueList[q + 1].Enqueue(child);
                                         }     
                                     }
                                   
@@ -116,7 +115,7 @@ namespace sudoku
             });
 
             Console.WriteLine("bitti");
-            return null;
+            return cozumBoard;
         }
     }
 }

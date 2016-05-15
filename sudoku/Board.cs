@@ -188,13 +188,13 @@ namespace sudoku
 
         public bool IsValidDfsq()
         {
-            foreach (Cell cell in this.Table)
-            {
-                if (cell.PossibleValues.Count == 0)
-                {
-                    return false;
-                }
-            }
+            //foreach (Cell cell in this.Table)
+            //{
+            //    if (cell.PossibleValues.Count == 0)
+            //    {
+            //        return false;
+            //    }
+            //}
             Cell[] row = new Cell[9];
 
             // satır
@@ -331,6 +331,37 @@ namespace sudoku
                 }
             }
             return boards;
+        }
+
+        protected bool Equals(Board other)
+        {
+            for (var index = 0; index < 9; index++)
+            {
+                for (var indexy = 0; indexy < 9; indexy++)
+                {
+                    if (other.Table[index, indexy].Value != Table[index, indexy].Value)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Board)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Table != null ? Table.GetHashCode() : 0) * 397) ^ (int)State;
+            }
         }
     }
 }

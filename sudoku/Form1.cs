@@ -55,11 +55,15 @@ namespace sudoku
 
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
-                    Board solvedBoard = new DFSSolver().SolveWithDFS(board);
+                    Board solvedWithDfs = new DFSSolver().SolveWithDFS(board);
                     stopwatch.Stop();
-                    Console.WriteLine("Time elapsed: {0} ms", stopwatch.ElapsedMilliseconds);
+                    Console.WriteLine("Time elapsed DFS: {0} ms", stopwatch.ElapsedMilliseconds);
+                    stopwatch.Restart();
+                    Board solvedWithLoq = new LoQSolver().Solve(board);
+                    stopwatch.Stop();
+                    Console.WriteLine("Time elapsed LoQ: {0} ms", stopwatch.ElapsedMilliseconds);
+                    Console.WriteLine("sonuc kontrol: {0}", solvedWithDfs.Equals(solvedWithLoq));
 
-                    Board sonuc = new LoQSolver().Solve(board);
                 }
                 catch (Exception ex)
                 {
