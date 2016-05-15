@@ -45,12 +45,12 @@ namespace sudoku
                     {
                         Controls.Add(textBox);
                     }
-                    bool valid = board.IsValid();
-                    if (!valid)
-                    {
-                        MessageBox.Show("Board hatalı");
-                        return;
-                    }
+                    //bool valid = board.IsValid();
+                    ////if (!valid)
+                    ////{
+                    ////    MessageBox.Show("Board hatalı");
+                    ////    return;
+                    ////}
                     board.FillPossibleValues();
 
                     Stopwatch stopwatch = new Stopwatch();

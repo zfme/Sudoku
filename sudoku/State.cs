@@ -8,6 +8,6 @@ namespace sudoku
 {
     public enum State
     {
-        Empty,Processing,Finished
+        Empty,Processing
     }
 }
