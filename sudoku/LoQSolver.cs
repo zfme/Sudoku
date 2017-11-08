@@ -22,14 +22,14 @@ namespace sudoku
             // ilk queue ya board u ekle
             queueList[0].Enqueue(new BoardDFSQ { Board = board, State = State.Empty });
             // çözüm objesi
-            int maxChildCount = 6;
+            int maxChildCount = 10;
             bool cozuldu = false;
             Board cozumBoard = null;
-            var options = new ParallelOptions { MaxDegreeOfParallelism = 8 };
+            var options = new ParallelOptions { MaxDegreeOfParallelism = 4 };
             Parallel.For(0, 4, options, (i, loopState) =>
             {
 
-                //  Console.WriteLine("Started thread={0}, i={1}", Thread.CurrentThread.ManagedThreadId, i); 
+                Console.WriteLine("Started thread={0}, i={1}", Thread.CurrentThread.ManagedThreadId, i); 
                 while (!cozuldu)
                 {
                     for (int q = 64; q >= 0; q--)
@@ -39,30 +39,34 @@ namespace sudoku
                             break;
                         }
                         BoardDFSQ boardDfsq;
-                        if (queueList[q].Count == 0)
-                        {
-                            continue;
-                        }
+                       
                         bool locked = false;
                         Monitor.TryEnter(boardlocks[q], ref locked);
                         if (!locked)
                         {
-                            i = 65;
+                            //i = 65;
                             continue;
                         }
-
-                        try
+                        if (queueList[q].Count == 0)
                         {
-                            boardDfsq = queueList[q].Peek();
-                        }
-                        catch (InvalidOperationException ex)
-                        {
+                            Monitor.Exit(boardlocks[q]);
                             continue;
                         }
-                        if (boardDfsq == null)
-                        {
-                            continue;
-                        }
+                        
+                        // bakılcak eleman olmalı
+                        //try
+                        //{
+                        boardDfsq = queueList[q].Dequeue();
+                        Monitor.Exit(boardlocks[q]);
+                        //}
+                        //catch (InvalidOperationException ex)
+                        //{
+                        //    continue;
+                        //}
+                        //if (boardDfsq == null)
+                        //{
+                        //    continue;
+                        //}
                         if (boardDfsq.State.Equals(State.Empty))
                         {
                             boardDfsq.State = State.Processing;
@@ -110,8 +114,8 @@ namespace sudoku
                             }
                         }
 
-                        queueList[q].Dequeue();
-                        Monitor.Exit(boardlocks[q]);
+                        //queueList[q].Dequeue();
+                        //Monitor.Exit(boardlocks[q]);
 
 
 
@@ -119,6 +123,7 @@ namespace sudoku
                         //       Thread.CurrentThread.ManagedThreadId, i);
                     }
                 }
+                Console.WriteLine("Ended thread={0}, i={1}", Thread.CurrentThread.ManagedThreadId, i);
             });
 
             Console.WriteLine("bitti");
