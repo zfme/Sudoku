@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace sudoku
+namespace Sudoku
 {
     public class Board
     {

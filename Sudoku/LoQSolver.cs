@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace sudoku
+namespace Sudoku
 {
     class LoQSolver
     {
@@ -26,9 +26,8 @@ namespace sudoku
             bool cozuldu = false;
             Board cozumBoard = null;
             var options = new ParallelOptions { MaxDegreeOfParallelism = 4 };
-            Parallel.For(0, 4, options, (i, loopState) =>
+            Parallel.For(0, 2, options, (i, loopState) =>
             {
-
                 Console.WriteLine("Started thread={0}, i={1}", Thread.CurrentThread.ManagedThreadId, i); 
                 while (!cozuldu)
                 {
