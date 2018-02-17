@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sudoku.Model;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -68,13 +69,13 @@ namespace Sudoku
 
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
+                Board solvedWithLoq = new LoQSolver().Solve(board);                
+                stopwatch.Stop();
+                Console.WriteLine("Time elapsed LoQ: ticks: {0}, {1} ms", stopwatch.ElapsedTicks, stopwatch.ElapsedMilliseconds);
+                stopwatch.Restart();
                 Board solvedWithDfs = new DFSSolver().SolveWithDFS(board);
                 stopwatch.Stop();
-                Console.WriteLine("Time elapsed DFS: {0} ms", stopwatch.ElapsedMilliseconds);
-                stopwatch.Restart();
-                Board solvedWithLoq = new LoQSolver().Solve(board);
-                stopwatch.Stop();
-                Console.WriteLine("Time elapsed LoQ: {0} ms", stopwatch.ElapsedMilliseconds);
+                Console.WriteLine("Time elapsed DFS: ticks: {0}, {1} ms", stopwatch.ElapsedTicks, stopwatch.ElapsedMilliseconds);
                 Console.WriteLine("sonuc kontrol: {0}", solvedWithDfs.Equals(solvedWithLoq));
 
             }

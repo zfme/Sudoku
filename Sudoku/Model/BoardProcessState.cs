@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sudoku
+namespace Sudoku.Model
 {
-    public enum State
+    public enum BoardProcessState
     {
-        Empty,Processing
+        Empty, Processing
     }
 }

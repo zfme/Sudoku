@@ -7,13 +7,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sudoku
+namespace Sudoku.Model
 {
+    /// <summary>
+    /// Sudoku tahtasını temsil eden sınıftır.
+    /// </summary>
     public class Board
     {
+        /// <summary>
+        /// Sudoku tahasındaki 81 tane hücreyi temsil eden iki boyutlu dizidir.
+        /// </summary>
         public Cell[,] Table = new Cell[9, 9];
-        public State State { get; set; }
+        /// <summary>
+        /// Sudoku tahtasının çözülme işlem durumudur. Tahta için eğer çözülme işlemi başlamış ise durum burada değiştirilir.
+        /// </summary>
+        public BoardProcessState State { get; set; }
 
+        /// <summary>
+        /// Tahta kopyalama işini yapar. evcut durumdaki tüm hücrelerini de kopyalayıp yeni bir tahta döndürür.
+        /// </summary>
+        /// <returns>Kopyalanmış tahta</returns>
         public Board Copy()
         {
             var board = new Board { State = State };
@@ -29,6 +42,9 @@ namespace Sudoku
             return board;
         }
 
+        /// <summary>
+        /// Tahtanın hücrelerinin alabileceği muhtemel değerleri doldurur.
+        /// </summary>
         public void FillPossibleValues()
         {
             while (true)
@@ -73,6 +89,11 @@ namespace Sudoku
             }
         }
 
+        /// <summary>
+        /// Verilen dizindeki sudoku txt formatındaki dosyasını okur ve görüntülemek için TextBox listesi döndürür.
+        /// </summary>
+        /// <param name="fileName">Sudoku dosyası</param>
+        /// <returns></returns>
         public List<TextBox> Oku(string fileName)
         {
             List<TextBox> liste = new List<TextBox>();
@@ -95,8 +116,10 @@ namespace Sudoku
                             x = x + 5;
                         }
 
-                        TextBox tb = new TextBox();
-                        tb.Size = new System.Drawing.Size(15, 15);
+                        TextBox tb = new TextBox
+                        {
+                            Size = new Size(15, 15)
+                        };
 
                         if (number == 0)
                         {
@@ -132,6 +155,10 @@ namespace Sudoku
             return liste;
         }
 
+        /// <summary>
+        /// Sudoku tahtasının hücre değerlerinin kurallara ugun olup olmadığını kontrol eder, eğer uygun ise true döndürür.
+        /// </summary>
+        /// <returns>true, eğer tahta kurallara uygun ise, aksi halde false döndürür.</returns>
         public bool IsValid()
         {
             Cell[] row = new Cell[9];
@@ -151,7 +178,6 @@ namespace Sudoku
             // sütün
             for (var colIndex = 0; colIndex < 9; colIndex++)
             {
-                // Cell[] col = new Cell[9];
                 for (var rowIndex = 0; rowIndex < 9; rowIndex++)
                 {
                     row[rowIndex] = Table[rowIndex, colIndex];
@@ -167,7 +193,6 @@ namespace Sudoku
 
                 for (var y = 0; y < 9; y = y + 3)
                 {
-                    // Cell[] sqr = new Cell[9];
                     var rowIndex = 0;
                     for (var i = index; i < index + 3; i++)
                     {
@@ -246,6 +271,7 @@ namespace Sudoku
 
             return true;
         }
+
         private bool ArraySayiKontrol(Cell[] cells)
         {
             bool[] numbers = new bool[9];
@@ -271,10 +297,6 @@ namespace Sudoku
 
         public bool IsSolved()
         {
-            if (!IsValid())
-            {
-                return false;
-            }
             for (var index = 0; index < 9; index++)
             {
                 for (var indexy = 0; indexy < 9; indexy++)
@@ -289,7 +311,10 @@ namespace Sudoku
             return true;
         }
 
-        public void FillStackWithFirstPossibleValues(Stack<Board> stack)
+        /// <summary>
+        /// DFS çözümü içide kullanılan bir fonksiyondur. Değeri bilinmeyen ilk hücre için muhtemel değerlerini içeren tahta kopyalarının listesini döndürür.
+        /// </summary>
+        public List<Board> GetBoardsWithFirstPossibleValues()
         {
             for (var index = 0; index < 9; index++)
             {
@@ -299,17 +324,20 @@ namespace Sudoku
                     var cellValue = cell.Value;
                     if (cellValue == 0)
                     {
+                        List<Board> possibleBoards = new List<Board>();
                         for (int i = cell.PossibleValues.Count - 1; i >= 0; i--)
                         {
                             Board copyBoard = this.Copy();
                             copyBoard.Table[index, indexy].Value = cell.PossibleValues[i];
-                            stack.Push(copyBoard);
+                            possibleBoards.Add(copyBoard);
                         }
-                        return;
+                        return possibleBoards;
                     }
                 }
             }
+            return new List<Board>(0);
         }
+
 
         public List<Board> FirstEmptyCellPossibleBoards()
         {
