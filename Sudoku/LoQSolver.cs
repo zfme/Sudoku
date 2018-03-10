@@ -1,8 +1,8 @@
-﻿using Sudoku.Model;
+﻿using Serilog;
+using Sudoku.Model;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,16 +13,16 @@ namespace Sudoku
     /// <summary>
     /// Kuyruk listesi ile sudoku çözen sınıftır.
     /// </summary>
-    public class LoQSolver
+    public class LoQSolver : ISolver
     {
         /// <summary>
         /// Kullanılan thread sayısı
         /// </summary>
-        private const int ThreadSayisi = 2;
+        private int _threadSayisi = 2;
         /// <summary>
         /// Bir sonraki kuyruğa aktarılabilecek maximum tahta kopyası sayısı
         /// </summary>
-        private const int MaxChildCount = 4;
+        private int _maxChildCount = 4;
         /// <summary>
         /// Çözüm değerleri
         /// </summary>
@@ -33,6 +33,12 @@ namespace Sudoku
         /// </summary>
         private List<ConcurrentQueue<BoardForDFSQueue>> queueList;
 
+        public LoQSolver(int ThreadSayisi, int MaxChildCount)
+        {
+            _maxChildCount = MaxChildCount;
+            _threadSayisi = ThreadSayisi;
+        }
+
         /// <summary>
         /// Verilen tahtayı kuyruk listesi ile çözer ve sonuç olarak tüm hücrelerinin değeri dolu ve geçerli bir tahat nesnesi döndürür.
         /// </summary>
@@ -40,6 +46,7 @@ namespace Sudoku
         /// <returns>Çözüm tahtası</returns>
         public Board Solve(Board board)
         {
+            Log.Information("LoQSolver başlıyor: Thread: {0}, MaxChildCount: {1}", _threadSayisi, _maxChildCount);
             queueList = new List<ConcurrentQueue<BoardForDFSQueue>>(65);
             var boardlocks = new object[65];
             for (int i = 0; i < 65; i++)
@@ -49,9 +56,9 @@ namespace Sudoku
             }
             // ilk queue ya board u ekle
             queueList[0].Enqueue(new BoardForDFSQueue { Board = board, State = BoardProcessState.Empty });
-            var options = new ParallelOptions { MaxDegreeOfParallelism = ThreadSayisi };
+            var options = new ParallelOptions { MaxDegreeOfParallelism = _threadSayisi };
             List<Thread> threads = new List<Thread>();
-            for (int i = 0; i < ThreadSayisi; i++)
+            for (int i = 0; i < _threadSayisi; i++)
             {
                 threads.Add(new Thread(delegate ()
                 {
@@ -68,11 +75,12 @@ namespace Sudoku
                 Coz();
             });
             */
+            Log.Information("LoQSolver threadler bekleniyor");
             foreach (Thread t in threads)
             {
                 t.Join();
             }
-            Console.WriteLine("bitti");
+            Log.Information("LoQSolver bitti");
             return cozumBoard;
         }
 
@@ -81,7 +89,8 @@ namespace Sudoku
         /// </summary>
         private void Coz()
         {
-            Console.WriteLine("Started thread={0}", Thread.CurrentThread.ManagedThreadId);
+           
+            Log.Verbose("Started thread={0}", Thread.CurrentThread.ManagedThreadId);
             while (!cozuldu)
             {
                 for (int q = 64; q >= 0; q--)
@@ -139,7 +148,7 @@ namespace Sudoku
                     int childCount = 0;
                     for (var index = 0; index < 9; index++)
                     {
-                        for (var indexy = 0; indexy < 9 && childCount < MaxChildCount; indexy++)
+                        for (var indexy = 0; indexy < 9 && childCount < _maxChildCount; indexy++)
                         {
                             if (boardDfsq.Board.Table[index, indexy].Value == 0)
                             {
@@ -159,7 +168,7 @@ namespace Sudoku
                                         queueList[q + 1].Enqueue(child);
                                         childCount++;
                                         usedPossibleValueCount++;
-                                        if (childCount == MaxChildCount)
+                                        if (childCount == _maxChildCount)
                                         {
                                             break;
                                         }
@@ -179,7 +188,7 @@ namespace Sudoku
                     //       Thread.CurrentThread.ManagedThreadId, i);
                 }
             }
-            Console.WriteLine("Ended thread={0}", Thread.CurrentThread.ManagedThreadId);
+            Log.Verbose("Ended thread={0}", Thread.CurrentThread.ManagedThreadId);
         }
 
     }

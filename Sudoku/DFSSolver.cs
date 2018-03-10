@@ -10,7 +10,7 @@ namespace Sudoku
     /// <summary>
     /// DFS Sudoku çözücüsü
     /// </summary>
-    public class DFSSolver
+    public class DFSSolver : ISolver
     {
         /// <summary>
         /// Tahtaların bulunduğu yığıt
@@ -22,7 +22,7 @@ namespace Sudoku
         /// </summary>
         /// <param name="board">Sudoku problemi tahtası</param>
         /// <returns>Çözüm tahtası</returns>
-        public Board SolveWithDFS(Board board)
+        public Board Solve(Board board)
         {
             stack.Push(board);
             while (stack.Count > 0)
