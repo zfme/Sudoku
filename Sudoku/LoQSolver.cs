@@ -31,7 +31,11 @@ namespace Sudoku
         /// <summary>
         /// Kuyruk listesi, thread-safe olması için ConcurrentQueue kullanılmıştır.
         /// </summary>
-        private List<ConcurrentQueue<BoardForDFSQueue>> queueList;
+        private List<Queue<BoardForDFSQueue>> queueList;
+        /// <summary>
+        /// Queue locks
+        /// </summary>
+        private object[] boardlocks = new object[65];
 
         public LoQSolver(int ThreadSayisi, int MaxChildCount)
         {
@@ -47,11 +51,10 @@ namespace Sudoku
         public Board Solve(Board board)
         {
             Log.Information("LoQSolver başlıyor: Thread: {0}, MaxChildCount: {1}", _threadSayisi, _maxChildCount);
-            queueList = new List<ConcurrentQueue<BoardForDFSQueue>>(65);
-            var boardlocks = new object[65];
+            queueList = new List<Queue<BoardForDFSQueue>>(65);
             for (int i = 0; i < 65; i++)
             {
-                queueList.Add(new ConcurrentQueue<BoardForDFSQueue>());
+                queueList.Add(new Queue<BoardForDFSQueue>());
                 boardlocks[i] = new object();
             }
             // ilk queue ya board u ekle
@@ -84,42 +87,53 @@ namespace Sudoku
             return cozumBoard;
         }
 
+        public void Temizle()
+        {
+            cozuldu = false;
+            cozumBoard = null;
+        }
+
         /// <summary>
         /// Her bir çözüm thread inin çalıştırdığı fonksiyon
         /// </summary>
         private void Coz()
         {
-           
+
             Log.Verbose("Started thread={0}", Thread.CurrentThread.ManagedThreadId);
             while (!cozuldu)
             {
                 for (int q = 64; q >= 0; q--)
                 {
+                    Log.Verbose("Thread={0} trying queue: {1}", Thread.CurrentThread.ManagedThreadId, q);
                     if (cozuldu)
                     {
+                        Log.Information("Thread={0} cozuldu en basta: {1}", Thread.CurrentThread.ManagedThreadId, q);
                         break;
                     }
 
-                    //bool locked = false;
-                    //Monitor.TryEnter(boardlocks[q], ref locked);
-                    //if (!locked)
-                    //{
-                    //    //i = 65;
-                    //    continue;
-                    //}
-                    //if (queueList[q].Count == 0)
-                    //{
-                    //    //Monitor.Exit(boardlocks[q]);
-                    //    continue;
-                    //}
+                    bool lockTaken = false;
+                    Monitor.TryEnter(boardlocks[q], ref lockTaken);
+                    if (!lockTaken)
+                    {
+                        break;
+                    }
+                    if (queueList[q].Count == 0)
+                    {
+                        Log.Information("Thread={0} queuedan eleman peek edemedi: {1}", Thread.CurrentThread.ManagedThreadId, q);
+                        Monitor.Exit(boardlocks[q]);
+                        continue;
+                    }
 
                     // bakılcak eleman olmalı
                     //try
                     //{
-                    if (!queueList[q].TryDequeue(out BoardForDFSQueue boardDfsq))
-                    {
-                        continue;
-                    }
+                    BoardForDFSQueue boardDfsq = queueList[q].Peek();
+                    //if (!queueList[q].Peek(out ))
+                    //{
+                        
+                    //    Monitor.Exit(boardlocks[q]);
+                    //    continue;
+                    //}
                     //Monitor.Exit(boardlocks[q]);
                     //}
                     //catch (InvalidOperationException ex)
@@ -141,47 +155,77 @@ namespace Sudoku
                     //}
                     if (boardDfsq.Board.IsSolved())
                     {
+                        Log.Information("Thread={0} cozuldu ortada: {1}, {2}", Thread.CurrentThread.ManagedThreadId, q, boardDfsq.Id);
                         cozuldu = true;
                         cozumBoard = boardDfsq.Board;
+                        Monitor.Exit(boardlocks[q]);
                         break;
                     }
                     int childCount = 0;
-                    for (var index = 0; index < 9; index++)
+                    bool exit = false;
+                    bool clear = true;
+                    if (boardDfsq.KilitlendiMi())
+                    {
+                        queueList[q].Dequeue();
+                        Monitor.Exit(boardlocks[q]);
+                        continue;
+                    }
+                    for (var index = 0; index < 9 && childCount < _maxChildCount; index++)
                     {
                         for (var indexy = 0; indexy < 9 && childCount < _maxChildCount; indexy++)
                         {
                             if (boardDfsq.Board.Table[index, indexy].Value == 0)
                             {
+
+                                Log.Verbose("Thread={0} found empty value: [{1},{2}], possible count:{3}", Thread.CurrentThread.ManagedThreadId,
+                                    index, indexy, boardDfsq.Board.Table[index, indexy].PossibleValues.Count);
                                 var usedPossibleValueCount = 0;
                                 for (int k = 0; k < boardDfsq.Board.Table[index, indexy].PossibleValues.Count; k++)
                                 {
+                                    clear = false;
                                     byte possibleValue = boardDfsq.Board.Table[index, indexy].PossibleValues[k];
                                     // boardDfsq.Board.Table[index, indexy].PossibleValues.RemoveAt(k);
                                     //  k--;
                                     BoardForDFSQueue child = boardDfsq.Copy();
                                     child.Board.Table[index, indexy].Value = possibleValue;
-                                    if (child.Board.IsValid())
-                                    {
+                                   // if (child.Board.IsValid())
+                                    //{
+                                        if (childCount == _maxChildCount)
+                                        {
+                                            exit = true;
+                                            break;
+                                        }
+                                        
+                                        Log.Verbose("Thread={0} found empty value: [{1},{2}], valid, possible value: {3} {4}", Thread.CurrentThread.ManagedThreadId,
+                                            index, indexy, true, possibleValue);
                                         child.Board.FillPossibleValues();
                                         child.State = BoardProcessState.Empty;
                                         child.QueueIndex = q + 1;
                                         queueList[q + 1].Enqueue(child);
                                         childCount++;
                                         usedPossibleValueCount++;
-                                        if (childCount == _maxChildCount)
-                                        {
-                                            break;
-                                        }
-                                    }
+
+                                  //  }
                                 }
                                 boardDfsq.Board.Table[index, indexy].PossibleValues.RemoveRange(0, usedPossibleValueCount);
-
+                            }
+                            if (exit)
+                            {
+                                break;
                             }
                         }
+                        if (exit)
+                        {
+                            break;
+                        }
+                    }
+                    if (clear)
+                    {
+                        queueList[q].Dequeue();
                     }
 
                     //queueList[q].Dequeue();
-                    //Monitor.Exit(boardlocks[q]);
+                    Monitor.Exit(boardlocks[q]);
 
 
                     //     Console.WriteLine("Queue check peek-{0}:{1} thread={2}, i={3}", q, boardDfsq,

@@ -39,5 +39,10 @@ namespace Sudoku
             }
             return null;
         }
+
+        public void Temizle()
+        {
+            stack = new Stack<Board>();
+        }
     }
 }

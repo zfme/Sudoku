@@ -155,7 +155,7 @@
             this.maxChildCountTextBox.Name = "maxChildCountTextBox";
             this.maxChildCountTextBox.Size = new System.Drawing.Size(54, 20);
             this.maxChildCountTextBox.TabIndex = 11;
-            this.maxChildCountTextBox.Text = "4";
+            this.maxChildCountTextBox.Text = "2";
             // 
             // progressBar1
             // 
@@ -199,7 +199,7 @@
             this.calismaSayisiTextBox.Name = "calismaSayisiTextBox";
             this.calismaSayisiTextBox.Size = new System.Drawing.Size(54, 20);
             this.calismaSayisiTextBox.TabIndex = 16;
-            this.calismaSayisiTextBox.Text = "10";
+            this.calismaSayisiTextBox.Text = "1";
             // 
             // SudokuForm
             // 

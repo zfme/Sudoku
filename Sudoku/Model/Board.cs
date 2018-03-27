@@ -42,6 +42,22 @@ namespace Sudoku.Model
             return board;
         }
 
+        public bool KilitlendiMi()
+        {
+            for (var index = 0; index < 9; index++)
+            {
+                for (var indexy = 0; indexy < 9; indexy++)
+                {
+                    var cell = Table[index, indexy];
+                    if (cell.Value == 0 && cell.PossibleValues.Count == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Tahtanın hücrelerinin alabileceği muhtemel değerleri doldurur.
         /// </summary>

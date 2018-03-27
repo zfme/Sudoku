@@ -7,5 +7,7 @@ namespace Sudoku
 
         Board Solve(Board board);
 
+        void Temizle();
+
     }
 }

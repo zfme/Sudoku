@@ -12,6 +12,7 @@ namespace Sudoku
     /// </summary>
     public class BoardForDFSQueue
     {
+        public string Id { get; set; }
         /// <summary>
         /// Sudoku tahtası nesnesi
         /// </summary>
@@ -28,10 +29,16 @@ namespace Sudoku
         public BoardForDFSQueue Copy() {
             return new BoardForDFSQueue
             {
+                Id = Guid.NewGuid().ToString(),
                 Board = this.Board.Copy(),
                 State = this.State,
                 QueueIndex = this.QueueIndex
             };
+        }
+
+        public bool KilitlendiMi()
+        {
+            return Board.KilitlendiMi();
         }
     }
 }
