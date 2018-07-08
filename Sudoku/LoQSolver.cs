@@ -59,7 +59,7 @@ namespace Sudoku
             }
             // ilk queue ya board u ekle
             queueList[0].Enqueue(new BoardForDFSQueue { Board = board, State = BoardProcessState.Empty });
-            var options = new ParallelOptions { MaxDegreeOfParallelism = _threadSayisi };
+            //var options = new ParallelOptions { MaxDegreeOfParallelism = _threadSayisi };
             List<Thread> threads = new List<Thread>();
             for (int i = 0; i < _threadSayisi; i++)
             {

@@ -47,6 +47,12 @@
             this.metrikComboBox = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.calismaSayisiTextBox = new System.Windows.Forms.TextBox();
+            this.topluCalistir = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.topluCalistirPDFSQ = new System.Windows.Forms.Label();
+            this.topluPDFSQSonuc = new System.Windows.Forms.Label();
+            this.topluSonucTextBox = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -199,14 +205,56 @@
             this.calismaSayisiTextBox.Name = "calismaSayisiTextBox";
             this.calismaSayisiTextBox.Size = new System.Drawing.Size(54, 20);
             this.calismaSayisiTextBox.TabIndex = 16;
-            this.calismaSayisiTextBox.Text = "1";
+            this.calismaSayisiTextBox.Text = "10";
+            // 
+            // topluCalistir
+            // 
+            this.topluCalistir.Location = new System.Drawing.Point(479, 52);
+            this.topluCalistir.Name = "topluCalistir";
+            this.topluCalistir.Size = new System.Drawing.Size(75, 23);
+            this.topluCalistir.TabIndex = 17;
+            this.topluCalistir.Text = "Toplu Çalıştır";
+            this.topluCalistir.UseVisualStyleBackColor = true;
+            this.topluCalistir.Click += new System.EventHandler(this.topluCalistir_Click);
+            // 
+            // topluCalistirPDFSQ
+            // 
+            this.topluCalistirPDFSQ.AutoSize = true;
+            this.topluCalistirPDFSQ.Location = new System.Drawing.Point(476, 105);
+            this.topluCalistirPDFSQ.Name = "topluCalistirPDFSQ";
+            this.topluCalistirPDFSQ.Size = new System.Drawing.Size(46, 13);
+            this.topluCalistirPDFSQ.TabIndex = 19;
+            this.topluCalistirPDFSQ.Text = "PDFSQ:";
+            // 
+            // topluPDFSQSonuc
+            // 
+            this.topluPDFSQSonuc.AutoSize = true;
+            this.topluPDFSQSonuc.Location = new System.Drawing.Point(550, 105);
+            this.topluPDFSQSonuc.Name = "topluPDFSQSonuc";
+            this.topluPDFSQSonuc.Size = new System.Drawing.Size(16, 13);
+            this.topluPDFSQSonuc.TabIndex = 21;
+            this.topluPDFSQSonuc.Text = "...";
+            // 
+            // topluSonucTextBox
+            // 
+            this.topluSonucTextBox.Location = new System.Drawing.Point(553, 133);
+            this.topluSonucTextBox.Multiline = true;
+            this.topluSonucTextBox.Name = "topluSonucTextBox";
+            this.topluSonucTextBox.ReadOnly = true;
+            this.topluSonucTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.topluSonucTextBox.Size = new System.Drawing.Size(949, 777);
+            this.topluSonucTextBox.TabIndex = 22;
             // 
             // SudokuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(940, 533);
+            this.ClientSize = new System.Drawing.Size(1576, 922);
+            this.Controls.Add(this.topluSonucTextBox);
+            this.Controls.Add(this.topluPDFSQSonuc);
+            this.Controls.Add(this.topluCalistirPDFSQ);
+            this.Controls.Add(this.topluCalistir);
             this.Controls.Add(this.calismaSayisiTextBox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.metrikComboBox);
@@ -227,6 +275,7 @@
             this.Text = "Sudoku";
             this.Load += new System.EventHandler(this.SudokuForm_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.SudokuForm_Paint);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -252,6 +301,11 @@
         private System.Windows.Forms.ComboBox metrikComboBox;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox calismaSayisiTextBox;
+        private System.Windows.Forms.Button topluCalistir;
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.Label topluCalistirPDFSQ;
+        private System.Windows.Forms.Label topluPDFSQSonuc;
+        private System.Windows.Forms.TextBox topluSonucTextBox;
     }
 }
 
